@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const beasts = require("./beasts");
-const e = require("express");
+const logRoute = require("./route-logger");
 
 // Make a basic server
 const app = express();
@@ -10,6 +10,9 @@ const app = express();
 app.use(cors())
 // Tell Express to always read the body of POST requests
 app.use(express.json())
+
+// Add middleware to log routes
+app.use(logRoute);
 
 // Set up the server routes
 app.get("/", (req, res) => {
@@ -22,11 +25,33 @@ app.get("/beasts", (req, res) => {
 
 app.get("/beasts/:id", (req, res) => {
 
-    if (0 <= req.params.id && req.params.id < beasts.length) {
+    try { // Attempt to do something - stop if there's an error
+
+        // Convert the id into an int (which possible makes a NaN)
+        const id = parseInt(req.params.id);
+
+        // If the id is a NaN or other bad value
+        if (isNaN(id)) {
+
+            // Exit the try, because we found a problem
+            throw "Invalid input!"
+
+        // If the id is outside the reasonable boundaries
+        } else if (id < 0 || id >= beasts.length) {
+
+            // Exit the try because we found a problem
+            throw "No such beast!"
+        }
+
+        // If everything is fine, just return the relevant beast
         const filtered = beasts.filter(b => b.id == req.params.id);
         res.send(filtered[0]);
-    } else {
-        res.status(404).send({ error: "You messed up!" })
+
+    // If there was a problem anywhere in the try, take the error information
+    } catch (e) {
+
+        // Send a response explaining the issue
+        res.status(404).send({ error: e });
     }
 })
 
@@ -44,5 +69,7 @@ app.post("/beasts", (req, res) => {
     // Return a message saying it worked
     res.status(201).send(newBeast);
 })
+
+app.delete("/beasts/:id")
 
 module.exports = app;

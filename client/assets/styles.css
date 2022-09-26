@@ -1,0 +1,19 @@
+body {
+    background-color: darksalmon;
+    transform: rotate(2deg);
+}
+
+h1 {
+    color: chartreuse;
+    border: 3px chocolate;
+    transform: rotate(-5deg);
+}
+
+#cage {
+    background-color: honeydew;
+}
+
+ul {
+    color: hotpink;
+    border: 1rem dashed blueviolet;
+}
