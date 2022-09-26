@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const beasts = require("./beasts");
+const e = require("express");
 
 // Make a basic server
 const app = express();
@@ -20,8 +21,13 @@ app.get("/beasts", (req, res) => {
 });
 
 app.get("/beasts/:id", (req, res) => {
-    const filtered = beasts.filter(b => b.id == req.params.id);
-    res.send(filtered[0]);
+
+    if (0 <= req.params.id && req.params.id < beasts.length) {
+        const filtered = beasts.filter(b => b.id == req.params.id);
+        res.send(filtered[0]);
+    } else {
+        res.status(404).send({ error: "You messed up!" })
+    }
 })
 
 app.post("/beasts", (req, res) => {
