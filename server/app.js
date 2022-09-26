@@ -29,11 +29,14 @@ app.post("/beasts", (req, res) => {
     // Grab the beast data
     const newBeast = req.body; 
 
+    // Select an ID for the beast
+    newBeast["id"] = beasts.length;
+
     // Add it to the list of beasts
+    beasts.push(newBeast);
 
     // Return a message saying it worked
-
-    res.send(newBeast);
+    res.status(201).send(newBeast);
 })
 
 module.exports = app;
